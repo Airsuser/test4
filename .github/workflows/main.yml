@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 确保检出所有历史记录
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -19,7 +21,7 @@ jobs:
           node-version: '16'  # 您可以指定所需的 Node.js 版本
 
       - name: Install Dependencies
-        run: npm install  # 确保生成或更新 package-lock.json
+        run: npm install
 
       - name: Build Project
         run: npm run build
