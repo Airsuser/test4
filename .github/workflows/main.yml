@@ -1,40 +1,35 @@
-name: Build and Deploy Vue Project
+name: Build and Deploy Vue App
 
 on:
   push:
     branches:
-      - main  # 或者您希望监听的其他分支
+      - main # 当有推送至 main 分支时触发构建
+  pull_request:
+    branches:
+      - main # 当有拉取请求至 main 分支时触发构建
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # 确保检出所有历史记录
+    - name: Checkout Repository
+      uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16'  # 您可以指定所需的 Node.js 版本
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16' # 根据需要选择 Node.js 版本
 
-      - name: Install Dependencies
-        run: npm install --force
+    - name: Install Dependencies
+      run: npm install
 
-      - name: Build Project
-        run: npm run build
+    - name: Build Project
+      run: npm run build
 
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
-        with:
-          enablement: always
-
-      - name: Upload Artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: dist  # 构建输出目录
-
-      - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v4
+    - name: Archive Production Artifact
+      if: github.event_name == 'push'
+      uses: actions/upload-artifact@v3
+      with:
+        name: vue-app-build
+        path: dist/
